@@ -3,7 +3,6 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-// #include <ppl.h>
 
 #define FILTER_SIZE 3
 #define ARR_3D vector<vector<vector<int>>>
@@ -13,18 +12,20 @@
 using namespace std;
 
 ARR_3D initializeData(int inputHeight, int inputWidth, int inputChannels, bool isRand);
+vector<vector<int>> initializeData2D(int inputHeight, int inputWidth);
 
 class VGG {
 public:
     VGG() {}
     ARR_3D convolution(ARR_3D data, int filterNum);
     ARR_3D maxPooling(ARR_3D data, int poolSize, int strides);
-    void fullyConnected(int inputHeight, int inputWidth, int inputChannels, int neuralNum);
-    void fullyConnected(int prevNeuralNum, int neuralNum);
+    vector<vector<int>> fullyConnected(ARR_3D data, int neuralNum);
+    vector<vector<int>> fullyConnected(vector<vector<int>> data, int neuralNum);
 
 private:
     int activation(int input);
     ARR_3D zeroPadding(ARR_3D data);
+    vector<vector<int>> flattening(ARR_3D data);
 };
 
 ARR_3D VGG::convolution(ARR_3D data, int filterNum)
@@ -118,13 +119,19 @@ ARR_3D VGG::maxPooling(ARR_3D data, int poolSize, int strides)
 }
 
 // if the previous layer of the FC layer is a Conv layer
-void VGG::fullyConnected(int inputHeight, int inputWidth, int inputChannels, int neuralNum)
+vector<vector<int>> VGG::fullyConnected(ARR_3D data, int neuralNum)
 {
+    int inputHeight = data.size();
+    int inputWidth = data[0].size();
+    int inputChannels = data[0][0].size();
+
     int memSize = inputHeight * inputWidth * inputChannels;
     int paraNum = inputHeight * inputWidth * inputChannels * neuralNum;
     int macNum = inputHeight * inputWidth * FILTER_SIZE * neuralNum;
 
-    printf("[FC] Input: %d x %d x %d  Output: %d\n"
+    printf("=========================[FC]=========================\n"
+            "              Input: %d x %d x %d\n"
+            "             Output: %d x 1\n"
             "        Memory size: %d x %d x %d = %d\n"
             "     # of parameter: %d x %d x %d x %d + %d = %d\n"
             "# of MAC operations: %d x %d x %d x %d = %d\n\n", 
@@ -133,15 +140,34 @@ void VGG::fullyConnected(int inputHeight, int inputWidth, int inputChannels, int
             inputHeight, inputWidth, inputChannels, neuralNum, neuralNum, paraNum,
             inputHeight, inputWidth, FILTER_SIZE, neuralNum, macNum);
 
+    vector<vector<int>> flatData = this->flattening(data);
+    vector<vector<int>> filter = initializeData2D(flatData[0].size(), neuralNum);
+    vector<vector<int>> Y = initializeData2D(1, neuralNum);
+
+    // matrix multiplication
+    for (int i = 0; i < 1; ++i) {
+        for (int j = 0; j < flatData.size(); ++j) {
+            for (int k = 0; k < neuralNum; ++k) {
+                Y[i][k] += flatData[i][j] * filter[j][k];
+            }
+        }
+    }
+
+    vector<vector<int>>().swap(flatData);
+    vector<vector<int>>().swap(filter);
+    return Y; 
 }
 
 // if the previous layer of the FC layer is a FC layer
-void VGG::fullyConnected(int prevNeuralNum, int neuralNum)
+vector<vector<int>> VGG::fullyConnected(vector<vector<int>> data, int neuralNum)
 {
+    int prevNeuralNum = data[0].size();
     int paraNum = prevNeuralNum * neuralNum;
     int macNum = prevNeuralNum * neuralNum;
 
-    printf("[FC] Input: %d  Output: %d\n"
+    printf("=========================[FC]=========================\n"
+            "              Input: %d x 1\n"
+            "             Output: %d x 1\n"
             "        Memory size: %d\n"
             "     # of parameter: %d x %d = %d\n"
             "# of MAC operations: %d x %d = %d\n\n", 
@@ -149,6 +175,22 @@ void VGG::fullyConnected(int prevNeuralNum, int neuralNum)
             prevNeuralNum,
             prevNeuralNum, neuralNum, paraNum,
             prevNeuralNum, neuralNum, macNum);
+
+    vector<vector<int>> filter = initializeData2D(prevNeuralNum, neuralNum);
+    vector<vector<int>> Y = initializeData2D(1, neuralNum);
+
+    // matrix multiplication
+    for (int i = 0; i < 1; ++i) {
+        for (int j = 0; j < prevNeuralNum; ++j) {
+            for (int k = 0; k < neuralNum; ++k) {
+                Y[i][k] += data[i][j] * filter[j][k];
+            }
+        }
+    }
+
+    vector<vector<int>>().swap(data);
+    vector<vector<int>>().swap(filter);
+    return Y;
 }
 
 int VGG::activation(int input)
@@ -177,6 +219,23 @@ ARR_3D VGG::zeroPadding(ARR_3D data)
     return padData;
 }
 
+vector<vector<int>> VGG::flattening(ARR_3D data)
+{
+    vector<vector<int>> Y = initializeData2D(1, 
+            data.size() * data[0].size() * data[0][0].size());
+    for (int i = 0; i < data.size(); ++i) {
+        for (int j = 0; j < data[0].size(); ++j) {
+            for (int k = 0; k < data[0][0].size(); ++k) {
+                Y[0][i*data[0].size() + j*data[0][0].size() + k]
+                    = data[i][j][k];
+            }
+        }
+    }
+
+    DELETE_VEC(data)
+    return Y;  // Y is shape of 1 x (h x w x c)
+}
+
 ARR_3D initializeData(int inputHeight, int inputWidth, int inputChannels, bool isRand)
 {
     // seed
@@ -192,6 +251,22 @@ ARR_3D initializeData(int inputHeight, int inputWidth, int inputChannels, bool i
                 int x = isRand ? rand() % 10 : 0;
                 data[i][j].push_back(x);
             }
+        }
+    }
+
+    return data;
+}
+
+vector<vector<int>> initializeData2D(int inputHeight, int inputWidth)
+{
+    // seed
+    srand(time(NULL));
+
+    vector<vector<int>> data;
+    for (int i = 0; i < inputHeight; ++i) {
+        data.push_back({});
+        for (int j = 0; j < inputWidth; ++j) {
+            data[i].push_back(rand() % 10);
         }
     }
 
@@ -220,9 +295,9 @@ int main()
     y8 = net.convolution(y8, 512);
     y8 = net.convolution(y8, 512);
     ARR_3D y9 = net.maxPooling(y8, 2, 2);
-    // net.fullyConnected(7, 7, 512, 4096);
-    // net.fullyConnected(4096, 4096);
-    // net.fullyConnected(4096, 1000);
+    vector<vector<int>> y10 = net.fullyConnected(y9, 4096);
+    y10 = net.fullyConnected(y10, 4096);
+    y10 = net.fullyConnected(y10, 1000);
 
     return 0;
 }
