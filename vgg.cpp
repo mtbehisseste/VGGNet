@@ -6,9 +6,9 @@
 // #include <ppl.h>
 
 #define FILTER_SIZE 3
-#define ARR_3D vector<vector<vector<int > > >
+#define ARR_3D vector<vector<vector<int>>>
 // force to reallocate the used memory, not sure if this works
-#define DELETE_VEC(data)  vector<vector<vector<int> > >().swap(data);
+#define DELETE_VEC(data)  vector<vector<vector<int>>>().swap(data);
 
 using namespace std;
 
@@ -18,7 +18,7 @@ class VGG {
 public:
     VGG() {}
     ARR_3D convolution(ARR_3D data, int filterNum);
-    void maxPooling(int inputHeight, int inputWidth, int inputChannels, int poolSize, int strides);
+    ARR_3D maxPooling(ARR_3D data, int poolSize, int strides);
     void fullyConnected(int inputHeight, int inputWidth, int inputChannels, int neuralNum);
     void fullyConnected(int prevNeuralNum, int neuralNum);
 
@@ -80,16 +80,41 @@ ARR_3D VGG::convolution(ARR_3D data, int filterNum)
     return this->zeroPadding(Y);
 }
 
-void VGG::maxPooling(int inputHeight, int inputWidth, int inputChannels, int poolSize, int strides)
+ARR_3D VGG::maxPooling(ARR_3D data, int poolSize, int strides)
 {
+    int inputHeight = data.size();
+    int inputWidth = data[0].size();
+    int inputChannels = data[0][0].size();
     int outputSize = (inputHeight - poolSize) / strides + 1;
 
     // TODO number of MAC ???
-    printf("[Pool] Input: %d x %d x %d  Output: %d x %d x %d\n"
+    printf("=========================[Pool]=========================\n"
+            "              Input: %d x %d x %d\n"
+            "             Output: %d x %d x %d\n"
             "# of MAC operations: 0\n\n",
             inputHeight, inputWidth, inputChannels,
             outputSize, outputSize, inputChannels);
+    
+    ARR_3D Y = initializeData(outputSize, outputSize, inputChannels, false);
 
+    for (int m = 0; m < inputChannels; ++m) {
+        for (int x = 0; x < outputSize; ++x) {
+            for (int y = 0; y < outputSize; ++y) {
+                // for each pooled value
+                int maxVal = -2147483648;
+                for (int i = 0; i < poolSize; ++i) { 
+                    for (int j = 0; j < poolSize; ++j) {
+                        if (data[strides*x + i][strides*y + j][m] > maxVal)
+                            maxVal = data[strides*x + i][strides*y + j][m];
+                    }
+                }
+                Y[x][y][m] = maxVal;
+            }
+        }
+    }
+
+    DELETE_VEC(data)
+    return Y;
 }
 
 // if the previous layer of the FC layer is a Conv layer
@@ -179,22 +204,22 @@ int main()
     ARR_3D data = initializeData(224, 224, 3, true);
     ARR_3D y1 = net.convolution(data, 64);
     y1 = net.convolution(y1, 64);
-    // ARR_3D y2 = net.maxPooling(224, 224, 64, 2, 2);
-    // net.convolution(112, 112, 64, 128);
-    // net.convolution(112, 112, 128, 128);
-    // net.maxPooling(112, 112, 128, 2, 2);
-    // net.convolution(56, 56, 128, 256);
-    // net.convolution(56, 56, 256, 256);
-    // net.convolution(56, 56, 256, 256);
-    // net.maxPooling(56, 56, 256, 2, 2);
-    // net.convolution(28, 28, 256, 512);
-    // net.convolution(28, 28, 512, 512);
-    // net.convolution(28, 28, 512, 512);
-    // net.maxPooling(28, 28, 512, 2, 2);
-    // net.convolution(14, 14, 512, 512);
-    // net.convolution(14, 14, 512, 512);
-    // net.convolution(14, 14, 512, 512);
-    // net.maxPooling(14, 14, 512, 2, 2);
+    ARR_3D y2 = net.maxPooling(y1, 2, 2);
+    ARR_3D y3 = net.convolution(y2, 128);
+    y3 = net.convolution(y3, 128);
+    ARR_3D y4 = net.maxPooling(y3, 2, 2);
+    ARR_3D y5 = net.convolution(y4, 256);
+    y5 = net.convolution(y5, 256);
+    y5 = net.convolution(y5,  256);
+    ARR_3D y6 = net.maxPooling(y5, 2, 2);
+    ARR_3D y7 = net.convolution(y6, 512);
+    y7 = net.convolution(y7, 512);
+    y7 = net.convolution(y7, 512);
+    ARR_3D y8 = net.maxPooling(y7, 2, 2);
+    y8 = net.convolution(y8, 512);
+    y8 = net.convolution(y8, 512);
+    y8 = net.convolution(y8, 512);
+    ARR_3D y9 = net.maxPooling(y8, 2, 2);
     // net.fullyConnected(7, 7, 512, 4096);
     // net.fullyConnected(4096, 4096);
     // net.fullyConnected(4096, 1000);
