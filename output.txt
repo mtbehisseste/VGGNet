@@ -115,23 +115,23 @@
 # of MAC operations: 0
 
 =========================[FC]=========================
-              Input: 224 x 224 x 3
+              Input: 7 x 7 x 512
              Output: 4096 x 1
-        Memory size: 224 x 224 x 3 = 150528
-     # of parameter: 224 x 224 x 3 x 4096 + 4096 = 616562688
-# of MAC operations: 224 x 224 x 3 x 4096 = 616562688
+        Memory size: 7 x 7 x 512 = 25088
+     # of parameter: 7 x 7 x 512 x 4096 + 4096 = 102764544
+# of MAC operations: 7 x 7 x 3 x 4096 = 602112
 
 =========================[FC]=========================
               Input: 4096 x 1
              Output: 4096 x 1
         Memory size: 4096
-     # of parameter: 4096 x 4096 = 16777216
+     # of parameter: 4096 x 4096 + 4096 = 16781312
 # of MAC operations: 4096 x 4096 = 16777216
 
 =========================[FC]=========================
               Input: 4096 x 1
              Output: 1000 x 1
         Memory size: 4096
-     # of parameter: 4096 x 1000 = 4096000
+     # of parameter: 4096 x 1000 + 1000 = 4097000
 # of MAC operations: 4096 x 1000 = 4096000
 
