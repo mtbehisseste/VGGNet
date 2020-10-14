@@ -48,12 +48,12 @@ ARR_3D VGG::convolution(ARR_3D data, int filterNum)
     printf("=========================[Conv]=========================\n"
             "              Input: %d x %d x %d\n"
             "             Output: %d x %d x %d\n"
-            "        Memory size: %d x %d x %d = %d\n"
+            "        Memory size: %d x %d x %d = %dK\n"
             "     # of parameter: %d x %d x %d x %d + %d = %d\n"
             "# of MAC operations: %d x %d x %d x %d x %d x %d = %d\n\n", 
             inputHeight, inputWidth, inputChannels,
             outputHeight + 2, outputWidth + 2, filterNum,
-            inputHeight, inputWidth, inputChannels, memSize, 
+            inputHeight, inputWidth, inputChannels, memSize / 1000, 
             FILTER_SIZE, FILTER_SIZE, inputChannels, filterNum, filterNum, paraNum,
             inputHeight, inputWidth, FILTER_SIZE, FILTER_SIZE, filterNum, batchSize, macNum);
 
@@ -132,11 +132,11 @@ vector<vector<int>> VGG::fullyConnected(ARR_3D data, int neuralNum)
     printf("=========================[FC]=========================\n"
             "              Input: %d x %d x %d\n"
             "             Output: %d x 1\n"
-            "        Memory size: %d x %d x %d = %d\n"
+            "        Memory size: %d x %d x %d = %dK\n"
             "     # of parameter: %d x %d x %d x %d + %d = %d\n"
             "# of MAC operations: %d x %d x %d x %d = %d\n\n", 
             inputHeight, inputWidth, inputChannels, neuralNum,
-            inputHeight, inputWidth, inputChannels, memSize, 
+            inputHeight, inputWidth, inputChannels, memSize / 1000, 
             inputHeight, inputWidth, inputChannels, neuralNum, neuralNum, paraNum,
             inputHeight, inputWidth, FILTER_SIZE, neuralNum, macNum);
 
@@ -168,11 +168,11 @@ vector<vector<int>> VGG::fullyConnected(vector<vector<int>> data, int neuralNum)
     printf("=========================[FC]=========================\n"
             "              Input: %d x 1\n"
             "             Output: %d x 1\n"
-            "        Memory size: %d\n"
+            "        Memory size: %dK\n"
             "     # of parameter: %d x %d = %d\n"
             "# of MAC operations: %d x %d = %d\n\n", 
             prevNeuralNum, neuralNum,
-            prevNeuralNum,
+            prevNeuralNum / 1000,
             prevNeuralNum, neuralNum, paraNum,
             prevNeuralNum, neuralNum, macNum);
 

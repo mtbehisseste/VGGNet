@@ -1,14 +1,14 @@
 =========================[Conv]=========================
               Input: 224 x 224 x 3
              Output: 224 x 224 x 64
-        Memory size: 224 x 224 x 3 = 150528
+        Memory size: 224 x 224 x 3 = 150K
      # of parameter: 3 x 3 x 3 x 64 + 64 = 1792
 # of MAC operations: 224 x 224 x 3 x 3 x 64 x 1 = 28901376
 
 =========================[Conv]=========================
               Input: 224 x 224 x 64
              Output: 224 x 224 x 64
-        Memory size: 224 x 224 x 64 = 3211264
+        Memory size: 224 x 224 x 64 = 3211K
      # of parameter: 3 x 3 x 64 x 64 + 64 = 36928
 # of MAC operations: 224 x 224 x 3 x 3 x 64 x 1 = 28901376
 
@@ -20,14 +20,14 @@
 =========================[Conv]=========================
               Input: 112 x 112 x 64
              Output: 112 x 112 x 128
-        Memory size: 112 x 112 x 64 = 802816
+        Memory size: 112 x 112 x 64 = 802K
      # of parameter: 3 x 3 x 64 x 128 + 128 = 73856
 # of MAC operations: 112 x 112 x 3 x 3 x 128 x 1 = 14450688
 
 =========================[Conv]=========================
               Input: 112 x 112 x 128
              Output: 112 x 112 x 128
-        Memory size: 112 x 112 x 128 = 1605632
+        Memory size: 112 x 112 x 128 = 1605K
      # of parameter: 3 x 3 x 128 x 128 + 128 = 147584
 # of MAC operations: 112 x 112 x 3 x 3 x 128 x 1 = 14450688
 
@@ -39,21 +39,21 @@
 =========================[Conv]=========================
               Input: 56 x 56 x 128
              Output: 56 x 56 x 256
-        Memory size: 56 x 56 x 128 = 401408
+        Memory size: 56 x 56 x 128 = 401K
      # of parameter: 3 x 3 x 128 x 256 + 256 = 295168
 # of MAC operations: 56 x 56 x 3 x 3 x 256 x 1 = 7225344
 
 =========================[Conv]=========================
               Input: 56 x 56 x 256
              Output: 56 x 56 x 256
-        Memory size: 56 x 56 x 256 = 802816
+        Memory size: 56 x 56 x 256 = 802K
      # of parameter: 3 x 3 x 256 x 256 + 256 = 590080
 # of MAC operations: 56 x 56 x 3 x 3 x 256 x 1 = 7225344
 
 =========================[Conv]=========================
               Input: 56 x 56 x 256
              Output: 56 x 56 x 256
-        Memory size: 56 x 56 x 256 = 802816
+        Memory size: 56 x 56 x 256 = 802K
      # of parameter: 3 x 3 x 256 x 256 + 256 = 590080
 # of MAC operations: 56 x 56 x 3 x 3 x 256 x 1 = 7225344
 
@@ -65,21 +65,21 @@
 =========================[Conv]=========================
               Input: 28 x 28 x 256
              Output: 28 x 28 x 512
-        Memory size: 28 x 28 x 256 = 200704
+        Memory size: 28 x 28 x 256 = 200K
      # of parameter: 3 x 3 x 256 x 512 + 512 = 1180160
 # of MAC operations: 28 x 28 x 3 x 3 x 512 x 1 = 3612672
 
 =========================[Conv]=========================
               Input: 28 x 28 x 512
              Output: 28 x 28 x 512
-        Memory size: 28 x 28 x 512 = 401408
+        Memory size: 28 x 28 x 512 = 401K
      # of parameter: 3 x 3 x 512 x 512 + 512 = 2359808
 # of MAC operations: 28 x 28 x 3 x 3 x 512 x 1 = 3612672
 
 =========================[Conv]=========================
               Input: 28 x 28 x 512
              Output: 28 x 28 x 512
-        Memory size: 28 x 28 x 512 = 401408
+        Memory size: 28 x 28 x 512 = 401K
      # of parameter: 3 x 3 x 512 x 512 + 512 = 2359808
 # of MAC operations: 28 x 28 x 3 x 3 x 512 x 1 = 3612672
 
@@ -91,21 +91,21 @@
 =========================[Conv]=========================
               Input: 14 x 14 x 512
              Output: 14 x 14 x 512
-        Memory size: 14 x 14 x 512 = 100352
+        Memory size: 14 x 14 x 512 = 100K
      # of parameter: 3 x 3 x 512 x 512 + 512 = 2359808
 # of MAC operations: 14 x 14 x 3 x 3 x 512 x 1 = 903168
 
 =========================[Conv]=========================
               Input: 14 x 14 x 512
              Output: 14 x 14 x 512
-        Memory size: 14 x 14 x 512 = 100352
+        Memory size: 14 x 14 x 512 = 100K
      # of parameter: 3 x 3 x 512 x 512 + 512 = 2359808
 # of MAC operations: 14 x 14 x 3 x 3 x 512 x 1 = 903168
 
 =========================[Conv]=========================
               Input: 14 x 14 x 512
              Output: 14 x 14 x 512
-        Memory size: 14 x 14 x 512 = 100352
+        Memory size: 14 x 14 x 512 = 100K
      # of parameter: 3 x 3 x 512 x 512 + 512 = 2359808
 # of MAC operations: 14 x 14 x 3 x 3 x 512 x 1 = 903168
 
@@ -117,21 +117,21 @@
 =========================[FC]=========================
               Input: 7 x 7 x 512
              Output: 4096 x 1
-        Memory size: 7 x 7 x 512 = 25088
-     # of parameter: 7 x 7 x 512 x 4096 + 4096 = 102764544
+        Memory size: 7 x 7 x 512 = 25K
+     # of parameter: 7 x 7 x 512 x 4096 + 4096 = 102760448
 # of MAC operations: 7 x 7 x 3 x 4096 = 602112
 
 =========================[FC]=========================
               Input: 4096 x 1
              Output: 4096 x 1
-        Memory size: 4096
-     # of parameter: 4096 x 4096 + 4096 = 16781312
+        Memory size: 4K
+     # of parameter: 4096 x 4096 = 16777216
 # of MAC operations: 4096 x 4096 = 16777216
 
 =========================[FC]=========================
               Input: 4096 x 1
              Output: 1000 x 1
-        Memory size: 4096
-     # of parameter: 4096 x 1000 + 1000 = 4097000
+        Memory size: 4K
+     # of parameter: 4096 x 1000 = 4096000
 # of MAC operations: 4096 x 1000 = 4096000
 
