@@ -4,12 +4,13 @@
 #include <ctime>
 #include <vector>
 
+using namespace std;
+
 #define FILTER_SIZE 3
-#define ARR_3D vector<vector<vector<int>>>
 // force to reallocate the used memory, not sure if this works
 #define DELETE_VEC(data)  vector<vector<vector<int>>>().swap(data);
 
-using namespace std;
+typedef vector<vector<vector<int>>> ARR_3D;
 
 ARR_3D initializeData(int inputHeight, int inputWidth, int inputChannels, bool isRand);
 vector<vector<int>> initializeData2D(int inputHeight, int inputWidth);
